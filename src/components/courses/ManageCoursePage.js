@@ -1,13 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { createCourse, loadCourses } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
-import CourseList from "./CourseList";
 
-class CoursesPage extends React.Component {
-  componentDidMount() {
-    const { courses, authors, loadCourses, loadAuthors } = this.props;
+function ManageCoursePage({ courses, authors, loadCourses, loadAuthors }) {
+  useEffect(() => {
     if (courses.length === 0) {
       loadCourses().catch(error => {
         throw error;
@@ -18,19 +16,16 @@ class CoursesPage extends React.Component {
         throw error;
       });
     }
-  }
+  }, []);
 
-  render() {
-    return (
-      <>
-        <h2>Courses</h2>
-        <CourseList courses={this.props.courses} />
-      </>
-    );
-  }
+  return (
+    <>
+      <h2>Manage Course</h2>
+    </>
+  );
 }
 
-CoursesPage.propTypes = {
+ManageCoursePage.propTypes = {
   loadAuthors: PropTypes.func.isRequired,
   loadCourses: PropTypes.func.isRequired,
   courses: PropTypes.array.isRequired,
@@ -40,15 +35,7 @@ CoursesPage.propTypes = {
 
 function mapStateToProps({ courses, authors }) {
   return {
-    courses:
-      authors.length === 0
-        ? []
-        : courses.map(course => {
-            return {
-              ...course,
-              authorName: authors.find(a => a.id === course.authorId).name
-            };
-          }),
+    courses,
     authors
   };
 }
@@ -62,4 +49,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CoursesPage);
+)(ManageCoursePage);
